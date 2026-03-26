@@ -1,7 +1,52 @@
+"""
+Sidebar Component Module
+
+This module implements the sidebar component for the Streamlit application.
+It provides UI controls for document management and model selection, including:
+- AI model selection (GPT-4o, GPT-4o-mini)
+- Document upload functionality
+- Document list display and management
+- Document deletion capabilities
+- Document list refresh
+
+The sidebar maintains the document list in session state for efficient
+re-rendering and manages all file operations through API calls.
+"""
+
 import streamlit as st
 from api_utils import upload_document, list_documents, delete_document
 
+
 def display_sidebar():
+    """
+    Display and manage the sidebar component.
+    
+    Renders the sidebar with the following sections:
+    1. Model Selection: Choose between GPT-4o and GPT-4o-mini
+    2. Document Upload: Upload new documents (PDF, DOCX, HTML)
+    3. Document List: Display all uploaded documents with metadata
+    4. Document Deletion: Select and delete documents
+    
+    Manages API calls for document operations and maintains session state
+    for efficient UI updates. Document list is cached in session state and
+    refreshed when documents are uploaded or deleted.
+    
+    Args:
+        None
+        
+    Returns:
+        None
+        
+    Session State Variables Modified:
+        - model (str): Selected AI model, defaults to last selection
+        - documents (list): List of available documents with metadata
+        
+    Features:
+        - File type validation (pdf, docx, html)
+        - User feedback with success/error messages
+        - Automatic document list refresh after operations
+        - Loading indicators for better UX
+    """
     # Sidebar: Model Selection
     model_options = ["gpt-4o", "gpt-4o-mini"]
     st.sidebar.selectbox("Select Model", options=model_options, key="model")

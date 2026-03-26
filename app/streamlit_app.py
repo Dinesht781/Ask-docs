@@ -1,3 +1,22 @@
+"""
+Ask-Docs Streamlit Web Application
+
+This module implements the frontend user interface for the Ask-Docs RAG system.
+It provides an interactive chat interface with document management capabilities,
+allowing users to:
+- Ask questions about uploaded documents
+- Upload new documents (PDF, DOCX, HTML)
+- Manage document collections
+- Select AI models for responses
+- Maintain multi-turn conversations
+
+Features:
+- Real-time WebSocket-based chat communication
+- Document upload and indexing
+- Chat history tracking per session
+- Model selection (GPT-4o, GPT-4o-mini)
+"""
+
 import streamlit as st
 from sidebar import display_sidebar
 from chat_interface import display_chat_interface

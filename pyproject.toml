@@ -1,0 +1,21 @@
+[project]
+name = "ask-docs"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "docx2txt",
+    "fastapi",
+    "install",
+    "langchain",
+    "langchain-chroma",
+    "langchain-community",
+    "langchain-core",
+    "langchain-openai",
+    "pip",
+    "pypdf",
+    "python-multipart",
+    "streamlit",
+    "uvicorn",
+]
