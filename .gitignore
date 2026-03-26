@@ -1,3 +1,5 @@
 .env
 fastrag/
 docs/
+__pycache__/
+chroma_db/
