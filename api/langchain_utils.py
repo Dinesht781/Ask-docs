@@ -8,20 +8,18 @@ through chat history awareness.
 
 The RAG chain uses:
 - ChromaDB for semantic document retrieval
-- OpenAI LLMs for answer generation
-- History-aware retriever for context-aware responses
+- Google-Gemini LLMs for answer generation
 """
 
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.chains import create_history_aware_retriever, create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from typing import List
+from langchain_core.runnables import RunnablePassthrough
+from typing import List, Dict, Any
 from langchain_core.documents import Document
 import os
 from dotenv import load_dotenv
-from chroma_utils import vectorstore
+from .chroma_utils import vectorstore
 
 load_dotenv()
 
@@ -59,39 +57,64 @@ qa_prompt = ChatPromptTemplate.from_messages([
 ])
 
 
-async def get_rag_chain(model="gpt-4o-mini"):
+def _format_docs(docs: List[Document]) -> str:
+    """
+    Format retrieved documents into a single context string.
+    
+    Args:
+        docs (List[Document]): List of retrieved document chunks.
+        
+    Returns:
+        str: Formatted context string with document content separated by newlines.
+    """
+    return "\n\n".join(doc.page_content for doc in docs)
+
+
+async def get_rag_chain(model="gemini-2.5-flash"):
     """
     Create and return a configured RAG (Retrieval Augmented Generation) chain.
     
-    Builds a chain that processes queries by:
+    Builds a composable chain using RunnablePassthrough and RunnableParallel that processes queries by:
     1. Contextualizing user questions based on chat history
     2. Retrieving relevant documents from ChromaDB
-    3. Generating answers using an LLM with retrieved context
+    3. Formatting retrieved documents into context
+    4. Generating answers using an LLM with retrieved context and history
     
     The chain is aware of conversation history and can reference previous
     messages to provide coherent multi-turn responses.
     
     Args:
-        model (str): The OpenAI model to use for answer generation.
-            Common options: "gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"
-            Default: "gpt-4o-mini"
+        model (str): The GEMINI model to use for answer generation.
+            Common options: "gemini-2.5-flash", "gemini-2.0-flash"
+            Default: "gemini-2.5-flash"
             
     Returns:
-        Chain: A LangChain chain object that accepts:
+        Runnable: A LangChain Runnable chain that accepts:
             - input (str): The user's question
             - chat_history (List[Dict]): List of previous messages with roles and content
             
-            The chain returns a dict with:
-            - answer (str): The generated response
-            - context (List[Document]): Retrieved document chunks used for response
+            The chain returns a string with the AI-generated answer.
             
     Note:
         - The retriever fetches the top 2 most relevant documents
-        - The LLM model must be supported by OpenAI API
-        - Requires OPENAI_API_KEY environment variable to be set
     """
-    llm = ChatOpenAI(model=model)
-    history_aware_retriever = create_history_aware_retriever(llm, retriever, contextualize_q_prompt)
-    question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
-    rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)    
+    llm = ChatGoogleGenerativeAI(model=model, temperature=0)
+    
+    # Step 1: Contextualize question with chat history
+    contextualize_chain = contextualize_q_prompt | llm | StrOutputParser()
+
+    rag_chain = (
+        RunnablePassthrough.assign(
+            standalone_question=lambda x: contextualize_chain.invoke(x)
+        )
+        .assign(
+            context=lambda x: _format_docs(
+                retriever.invoke(x["standalone_question"])
+            )
+        )
+        | qa_prompt
+        | llm
+        | StrOutputParser()
+    )
+
     return rag_chain

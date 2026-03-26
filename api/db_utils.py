@@ -80,7 +80,7 @@ def insert_application_logs(session_id, user_query, gpt_response, model):
         session_id (str): Unique session identifier for tracking multi-turn conversations
         user_query (str): The original user question
         gpt_response (str): The AI-generated response
-        model (str): Name of the AI model used (e.g., "gpt-4o", "gpt-4o-mini")
+        model (str): Name of the AI model used (e.g., "gemini-2.5-flash", "gemini-2.0-flash")
         
     Returns:
         None

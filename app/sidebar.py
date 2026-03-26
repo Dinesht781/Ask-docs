@@ -3,7 +3,7 @@ Sidebar Component Module
 
 This module implements the sidebar component for the Streamlit application.
 It provides UI controls for document management and model selection, including:
-- AI model selection (GPT-4o, GPT-4o-mini)
+- AI model selection (GEMINI-2.5-FLASH, GEMINI-2.0-FLASH)
 - Document upload functionality
 - Document list display and management
 - Document deletion capabilities
@@ -22,7 +22,7 @@ def display_sidebar():
     Display and manage the sidebar component.
     
     Renders the sidebar with the following sections:
-    1. Model Selection: Choose between GPT-4o and GPT-4o-mini
+    1. Model Selection: Choose between GEMINI-2.5-FLASH & GEMINI-2.0-FLASH
     2. Document Upload: Upload new documents (PDF, DOCX, HTML)
     3. Document List: Display all uploaded documents with metadata
     4. Document Deletion: Select and delete documents
@@ -48,7 +48,7 @@ def display_sidebar():
         - Loading indicators for better UX
     """
     # Sidebar: Model Selection
-    model_options = ["gpt-4o", "gpt-4o-mini"]
+    model_options = ["gemini-2.5-flash", "gemini-2.0-flash"]
     st.sidebar.selectbox("Select Model", options=model_options, key="model")
 
     # Sidebar: Upload Document

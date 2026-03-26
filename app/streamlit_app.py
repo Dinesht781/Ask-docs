@@ -14,7 +14,7 @@ Features:
 - Real-time WebSocket-based chat communication
 - Document upload and indexing
 - Chat history tracking per session
-- Model selection (GPT-4o, GPT-4o-mini)
+- Model selection (GEMINI-2.5-FLASH, GEMINI-2.0-FLASH)
 """
 
 import streamlit as st

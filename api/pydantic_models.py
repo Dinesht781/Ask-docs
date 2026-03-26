@@ -18,11 +18,11 @@ class ModelName(str, Enum):
     Enumeration of available AI models for query processing.
     
     Attributes:
-        GPT4_O (str): OpenAI's GPT-4 Omni model, most capable and recommended
-        GPT4_O_MINI (str): OpenAI's GPT-4 Omni Mini model, faster and more cost-effective
+        GEMINI_1_5_FLASH (str): Google's Gemini 1.5 Flash model, fast and efficient
+        GEMINI_1_5_PRO (str): Google's Gemini 1.5 Pro model, most capable
     """
-    GPT4_O = "gpt-4o"
-    GPT4_O_MINI = "gpt-4o-mini"
+    GEMINI_2_5_FLASH = "gemini-2.5-flash"
+    GEMINI_2_0_FLASH = "gemini-2.0-flash"
 
 
 class QueryInput(BaseModel):
@@ -34,11 +34,11 @@ class QueryInput(BaseModel):
         session_id (str): Optional session identifier for tracking conversation history.
             If not provided, a new session will be created. Default: None
         model (ModelName): The AI model to use for generating responses.
-            Default: ModelName.GPT4_O_MINI
+            Default: ModelName.GEMINI_2_5_FLASH
     """
     question: str
     session_id: str = Field(default=None)
-    model: ModelName = Field(default=ModelName.GPT4_O_MINI)
+    model: ModelName = Field(default=ModelName.GEMINI_2_5_FLASH)
 
 
 class QueryResponse(BaseModel):

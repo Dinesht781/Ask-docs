@@ -11,9 +11,10 @@ Supported document formats:
 - HTML (.html)
 """
 
+import logging
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, UnstructuredHTMLLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_chroma import Chroma
 from typing import List
 from langchain_core.documents import Document
@@ -25,8 +26,11 @@ load_dotenv()
 # Initialize text splitter with 1000-character chunks and 200-character overlap
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200, length_function=len)
 
-# Initialize OpenAI embedding function
-embedding_function = OpenAIEmbeddings()
+# load embedding model name from environment variable, default to "gemini-embedding-001"
+google_model = os.getenv("GOOGLE_EMBEDDING_MODEL", "gemini-embedding-001")
+
+# Initialize Google Generative AI embeddings with the specified model
+embedding_function = GoogleGenerativeAIEmbeddings(model=google_model)
 
 # Initialize ChromaDB vector store with persistent storage
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedding_function)
@@ -82,22 +86,21 @@ def index_document_to_chroma(file_path: str, file_id: int) -> bool:
         bool: True if the document was successfully indexed, False if an error occurred.
         
     Note:
-        - Automatically generates embeddings using OpenAI's embedding API
         - Each document chunk includes the file_id in its metadata
         - Errors are logged to stdout for debugging purposes
     """
     try:
         splits = load_and_split_document(file_path)
         
-        # Add metadata to each split
         for split in splits:
             split.metadata['file_id'] = file_id
         
         vectorstore.add_documents(splits)
-        # vectorstore.persist()
         return True
     except Exception as e:
-        print(f"Error indexing document: {e}")
+        import traceback
+        err = f"Error indexing document {file_path}: {str(e)}\n" + traceback.format_exc()
+        logging.error(err)
         return False
 
 

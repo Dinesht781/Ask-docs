@@ -20,7 +20,7 @@ import asyncio
 import websockets
 
 
-async def websocket_communicate(question, session_id, model="gpt-4o-mini"):
+async def websocket_communicate(question, session_id, model="gemini-2.5-flash"):
     """
     Communicate with the backend via WebSocket for real-time chat responses.
     
@@ -33,7 +33,7 @@ async def websocket_communicate(question, session_id, model="gpt-4o-mini"):
         session_id (str): Session identifier for conversation tracking. May be None
             for new sessions (backend will generate one).
         model (str): The AI model to use for response generation.
-            Default: "gpt-4o-mini"
+            Default: "gemini-2.5-flash"
             
     Returns:
         None
