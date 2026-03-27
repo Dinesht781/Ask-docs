@@ -33,10 +33,10 @@ Ask-Docs is a simple Retrieval Augmented Generation (RAG) chatbot application bu
 
 ## Prerequisites
 
-- Python 3.10+ (suggested)
+- Python 3.11 (suggested)
 - `pip` package manager
-- OpenAI API key set as environment variable:
-  - `OPENAI_API_KEY` (for `langchain_openai` usage)
+- GOOGLE API key set as environment variable:
+  - `GOOGLE_API_KEY` (for `langchain_google_genai` usage)
 
 ## Install dependencies
 
@@ -60,7 +60,7 @@ uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Endpoints:
-- POST `/chat` with JSON `{"question":"...", "model":"gpt-4o-mini", "session_id":"..."}`
+- POST `/chat` with JSON `{"question":"...", "model":"gemini-2.5-flash", "session_id":"..."}`
 - POST `/upload-doc` with form data file field `file`
 - GET `/list-docs`
 - POST `/delete-doc` with JSON `{"file_id": <id>}`
@@ -76,7 +76,7 @@ Then open the local Streamlit URL (<http://localhost:8501> by default).
 
 ## Usage
 
-1. Choose model in sidebar (gpt-4o or gpt-4o-mini).
+1. Choose model in sidebar (gemini-2.5-flash or gemini-2.0-flash).
 2. Upload a supported document.
 3. Ask questions in the chat box.
 4. View chatbot response and then continue conversation.
@@ -85,7 +85,7 @@ Then open the local Streamlit URL (<http://localhost:8501> by default).
 ## Troubleshooting
 
 - Ensure the backend is running before launching Streamlit.
-- Confirm `OPENAI_API_KEY` is set in environment or `.env`.
+- Confirm `GOOGLE_API_KEY` is set in environment or `.env`.
 - If deployment fails with vector store errors, clear `chroma_db/` and restart.
 
 ## Notes
